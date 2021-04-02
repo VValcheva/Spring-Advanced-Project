@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="~{fragments/head}"></th:block>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light text-capitalize main-font-family">
+    <th:block th:include="~{fragments/navigation}"></th:block>
+</nav>
+
+<div class="contact main-font-family text-center">
+    <div class="container">
+        <h2 id="contact">Edit Category</h2>
+        <div class="row">
+            <div class="col-6">
+                <div class="contact-form">
+                    <form th:action="@{/categories/edit/{id}(id=${category.id})}" th:method="POST">
+                        <input th:field="${category.name}" type="text" name="name" id="name" placeholder="Name">
+                        <input type="submit" value="submit">
+                    </form>
+                </div>
+            </div>
+            <div class="col-6">
+                <h2 class="text-right">Is there an inaccuracy? Fix things fast!</h2>
+                <img src="/imgs/shape.png">
+            </div>
+        </div>
+    </div>
+    <div></div>
+</div>
+
+<footer class="noto-font-family">
+    <th:block th:include="~{fragments/footer}"/>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:include="~{/fragments/head}"></th:block>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light text-capitalize main-font-family">
+    <th:block th:include="~{fragments/navigation}"></th:block>
+</nav>
+<main class="mt-3">
+    <br>
+    <br>
+    <br>
+    <br>
+    <h1 class="text-center text-dark">All Reservations</h1>
+    <hr class="hr-2 bg-dark w-75">
+    <table class="table table-hover w-75 mx-auto">
+        <thead>
+        <tr class="row mx-auto">
+            <th class="col-md-1 text-center">#</th>
+            <th class="col-md-2 text-center">Username</th>
+            <th class="col-md-3 text-center">Email</th>
+            <th class="col-md-4 text-center">Authorities</th>
+            <th class="col-md-2 text-center">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <th:block th:each="user, iter : ${users}">
+            <tr class="row mx-auto">
+                <th class="col-md-1 text-center" th:text="${iter.index + 1}"></th>
+                <!--                <td class="col-md-2"><div class="text-center">-->
+                <!--                    <img th:src="${property.imageUrl}" width="40" height="40" alt="Property"></div></td>-->
+                <td class="col-md-2 text-center" th:text="${user.username}"></td>
+                <td class="col-md-3 text-center" th:text="${user.email}"></td>
+                <td class="col-md-4 text-center" th:text="${#strings.listJoin(user.authorities, ', ')}">
+
+                <td class="col-md-2 text-center">
+
+                    <div class="row">
+
+                        <th:block th:if="${#lists.contains(user.authorities, 'ROLE_USER')
+                                && !#lists.contains(user.authorities, 'ROLE_ADMIN')
+                                }">
+                            <form th:action="@{/users/set-admin/{id}(id=${user.id})}" th:method="post" class="mx-1">
+                                <input type="hidden" name="_csrf" value="80417983-fe8b-45c7-963e-31f6915a1560">
+                                <button class="btn btn-dark">ADMIN</button>
+                            </form>
+                        </th:block>
+
+                        <th:block sec:authorize="hasRole('ROLE_ROOT')">
+                        <th:block th:if="${#lists.contains(user.authorities, 'ROLE_USER')
+                                && #lists.contains(user.authorities, 'ROLE_ADMIN')
+                                && !#lists.contains(user.authorities, 'ROLE_ROOT')
+                                }">
+
+                            <form th:action="@{/users/set-user/{id}(id=${user.id})}" th:method="post" class="mx-1">
+                                <input type="hidden" name="_csrf" value="80417983-fe8b-45c7-963e-31f6915a1560">
+                                <button class="btn btn-dark">USER</button>
+                            </form>
+                        </th:block>
+                        </th:block>
+                    </div>
+
+
+                </td>
+
+
+            </tr>
+        </th:block>
+
+        </tbody>
+    </table>
+    <hr class="hr-2 bg-dark">
+</main>
+<footer class="noto-font-family">
+    <th:block th:include="~{fragments/footer}"/>
+</footer>
+
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:include="~{fragments/head}"></th:block>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light text-capitalize main-font-family">
+    <th:block th:include="~{fragments/navigation}"></th:block>
+</nav>
+
+<div class="about lobster-font-family">
+    <div class="container main">
+        <br>
+        <br>
+        <h2 class="text-capitalize" id="room">Our Properties</h2>
+
+    </div>
+</div>
+
+<footer class="noto-font-family">
+    <th:block th:include="~{fragments/footer}"/>
+</footer>
+
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+
+<script th:inline="javascript">
+
+    function createProperty(property) {
+        return '<div class="row">'
+                    + '<div class="col-lg-4 col-12">'
+                        + `<div class="img" style="background-image: url('${property.imageUrl}')"></div>`
+                    + '</div>'
+                    + '<div class="col-lg-8 col-12">'
+                        + '<div class="block">'
+                            + '<div>'
+                                + `<strong>${property.name}</strong>`
+                                + `<h5>${property.pricePerMonth} BGN</h5>`
+                                + `<p>Category: ${property.category}</p>`
+                                + `<button><a href="/properties/details/${property.id}" class="text-capitalize">Read more</a></button>`
+                            + '</div>'
+                        + '</div>'
+                    + '</div>'
+                + '</div>'
+    }
+
+    const propertyContainer = document.getElementsByClassName('main');
+
+    fetch('http://localhost:8080/properties/fetch')
+        .then((response) => response.json())
+        .then((data) => {
+
+            // $('.main').empty();
+
+            {if (data.length === 0) {
+                $('.main').append(`<h1 class="text-center font-weight-bold">We don't have any available properties at the moment.</h1>`)
+            } else
+                for (let i = 0; i < data.length; i++) {
+                    $('.main').append(createProperty(data[i]));
+                }
+            }
+        });
+
+</script>
+</body>
+</html>

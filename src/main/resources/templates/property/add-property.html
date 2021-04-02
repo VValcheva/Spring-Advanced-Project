@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="~{fragments/head}"></th:block>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light text-capitalize main-font-family">
+    <th:block th:include="~{fragments/navigation}"></th:block>
+</nav>
+
+<div class="contact main-font-family text-center">
+    <div class="container">
+        <h2 id="contact">Add Property</h2>
+        <div class="row">
+            <div class="col-6">
+                <div class="contact-form">
+                    <form th:object="${propertyAddBindingModel}" th:action="@{/properties/add}" th:method="POST" enctype="multipart/form-data">
+                        <small th:each="e : ${#fields.errors('name')}" th:text="${e}" id="nameError" class="form-text bg-warning rounded"></small>
+                        <input type="text" name="name" id="name" placeholder="Name">
+                        <small th:each="e : ${#fields.errors('description')}" th:text="${e}" id="nameError" class="form-text bg-warning rounded"></small>
+                        <textarea name="description" id="description" cols="41" rows="5" placeholder="Description"></textarea>
+                        <small th:each="e : ${#fields.errors('pricePerMonth')}" th:text="${e}" id="nameError" class="form-text bg-warning rounded"></small>
+                        <input type="number" name="pricePerMonth" id="pricePerMonth" placeholder="Price per month">
+                        <small th:each="e : ${#fields.errors('imageUrl')}" th:text="${e}" id="nameError" class="form-text bg-warning rounded"></small>
+                        <input type="file" class="form-control-file" id="imageUrl" name="imageUrl">
+                        <small th:each="e : ${#fields.errors('category')}" th:text="${e}" id="nameError" class="form-text bg-warning rounded"></small>
+                        <select  style="margin-bottom: 20px;" class="form-control" id="" name="category">
+                            <option selected="" disabled="">Select Category</option>
+                            <option th:each="c : ${categories}" th:value="${c}" th:text="${c}">First Artist</option>
+                        </select>
+                        <input type="submit" value="Add">
+                    </form>
+                </div>
+            </div>
+            <div class="col-6">
+                <h2 class="text-right">Offer accommodation! Describe it well so that there is demand!</h2>
+                <img src="/imgs/shape.png">
+            </div>
+        </div>
+    </div>
+    <div></div>
+</div>
+
+<footer class="noto-font-family">
+    <th:block th:include="~{fragments/footer}"/>
+</footer>
+
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+
+<!--<script>-->
+<!--    fetch('/categories/fetch')-->
+<!--        .then((response) => response.json())-->
+<!--        .then((json) => {-->
+<!--            json.forEach((category) => $('#add-product-categories')-->
+<!--                .append(`<option value="${category.id}">${category.name}</option>`));-->
+<!--        })-->
+<!--        .catch((err) => console.log(err));-->
+<!--</script>-->
+
+</body>
+</html>
