@@ -7,9 +7,13 @@ import bg.softuni.accommodation.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,27 +32,46 @@ public class UserController extends BaseController {
 
     @GetMapping("/register")
     @PreAuthorize("isAnonymous()")
-    public ModelAndView register() {
-        return super.view("users/register");
+    public String register(Model model) {
+
+        if (!model.containsAttribute("userRegisterBindingModel")){
+            model.addAttribute("userRegisterBindingModel", new UserRegisterBindingModel());
+        }
+
+        return "users/register";
     }
 
     @PostMapping("/register")
     @PreAuthorize("isAnonymous()")
-    public ModelAndView registerConfirm(@ModelAttribute(name = "model") UserRegisterBindingModel model) {
-        if (!model.getPassword().equals(model.getConfirmPassword())) {
-            return super.view("users/register");
+    public ModelAndView registerConfirm(@Valid @ModelAttribute(name = "userRegisterBindingModel")
+                                                    UserRegisterBindingModel userRegisterBindingModel,
+                                        BindingResult bindingResult,
+                                        RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("userRegisterBindingModel", userRegisterBindingModel);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.userRegisterBindingModel", bindingResult);
+
+            return super.redirect("/users/register");
+        }
+
+        if (!userRegisterBindingModel.getPassword().equals(userRegisterBindingModel.getConfirmPassword())) {
+            redirectAttributes.addFlashAttribute("userRegisterBindingModel", userRegisterBindingModel);
+            redirectAttributes.addFlashAttribute("passwordNotMatch", true);
+
+            return super.redirect("/users/register");
         }
 
         this.userService
-                .registerUser(this.modelMapper.map(model, UserServiceModel.class));
+                .registerUser(this.modelMapper.map(userRegisterBindingModel, UserServiceModel.class));
 
-        return super.view("users/login");
+        return super.redirect("users/login");
     }
 
     @GetMapping("/login")
     @PreAuthorize("isAnonymous()")
-    public ModelAndView login() {
-        return super.view("users/login");
+    public String login() {
+        return "users/login";
     }
 
     @GetMapping("/all")

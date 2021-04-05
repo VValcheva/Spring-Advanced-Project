@@ -15,8 +15,11 @@
         <div class="row">
             <div class="col-6">
                 <div class="contact-form">
-                    <form th:action="@{/categories/add}" th:method="POST">
-                        <input type="text" name="name" id="name" placeholder="Name">
+                    <form th:object="${categoryAddBindingModel}" th:action="@{/categories/add}" th:method="POST">
+
+                        <small th:each="e : ${#fields.errors('name')}" th:text="${e}" id="nameError" class="form-text bg-warning rounded"></small>
+                        <input th:field="*{name}" type="text" name="name" id="name" placeholder="Name">
+
                         <input type="submit" value="Add">
                     </form>
                 </div>

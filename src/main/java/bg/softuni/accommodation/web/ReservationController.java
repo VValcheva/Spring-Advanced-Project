@@ -13,10 +13,13 @@ import bg.softuni.accommodation.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.LocalDate;
@@ -33,7 +36,10 @@ public class ReservationController extends BaseController{
     private final ModelMapper modelMapper;
 
 
-    public ReservationController(ReservationService reservationService, PropertyService propertyService, UserService userService, ModelMapper modelMapper) {
+    public ReservationController(ReservationService reservationService,
+                                 PropertyService propertyService,
+                                 UserService userService,
+                                 ModelMapper modelMapper) {
         this.reservationService = reservationService;
         this.propertyService = propertyService;
         this.userService = userService;
@@ -43,34 +49,50 @@ public class ReservationController extends BaseController{
 
     @GetMapping("/property/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ModelAndView reserveProperty(@PathVariable String id, ModelAndView modelAndView,
+    public ModelAndView reserveProperty(@PathVariable String id, Model model,
                                      Principal principal) {
+
+        if (!model.containsAttribute("reservationBindingModel")){
+            model.addAttribute("reservationBindingModel", new ReservationBindingModel());
+        }
+
 
         PropertyAllViewModel propertyAllViewModel = this.modelMapper
                 .map(this.propertyService.findPropertyById(id), PropertyAllViewModel.class);
 
-        modelAndView.addObject("property", propertyAllViewModel);
+        model.addAttribute("property", propertyAllViewModel);
         //modelAndView.addObject("customerName", principal.getName());
         //Make this with th:text="'Customer: ' + ${#authentication.getName()}" in html input element
 
-        return super.view("reservation/reservation", modelAndView);
+        return super.view("reservation/reservation");
     }
 
 
-    @PostMapping("/reserve/{id}")
+    @PostMapping("/property/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ModelAndView addOrderConfirm(@PathVariable String id, @ModelAttribute(name = "model") ReservationBindingModel model,
-                                        RedirectAttributes redirectAttributes, Principal principal) throws Exception {
+    public ModelAndView reservePropertyConfirm(@PathVariable String id, @Valid @ModelAttribute(name = "reservationBindingModel")
+            ReservationBindingModel reservationBindingModel,
+                                               BindingResult bindingResult,
+                                        RedirectAttributes redirectAttributes,
+                                        Principal principal) throws Exception {
+
+        if(bindingResult.hasErrors()){
+            redirectAttributes.addFlashAttribute("reservationBindingModel", reservationBindingModel);
+            redirectAttributes
+                    .addFlashAttribute("org.springframework.validation.BindingResult.reservationBindingModel", bindingResult);
+
+            return super.redirect("/reservations/property/" + id);
+        }
 
         ReservationServiceModel reservationServiceModel = this.modelMapper
-                .map(model, ReservationServiceModel.class);
+                .map(reservationBindingModel, ReservationServiceModel.class);
 
         PropertyServiceModel propertyServiceModel = propertyService.findPropertyById(id);
         String username = principal.getName();
         UserServiceModel userServiceModel = userService.findUserByUsername(username);
 
         reservationServiceModel.setProperty(propertyServiceModel);
-        reservationServiceModel.setRentFrom(LocalDate.parse(model.getRentFrom()));
+        reservationServiceModel.setRentFrom(LocalDate.parse(reservationBindingModel.getRentFrom()));
         reservationServiceModel.setTotalPrice(propertyServiceModel.getPricePerMonth().multiply(BigDecimal.valueOf(12)));
         reservationServiceModel.setTenant(userServiceModel);
 

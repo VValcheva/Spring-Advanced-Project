@@ -54,7 +54,7 @@ public class CategoryController extends BaseController {
             redirectAttributes.addFlashAttribute("categoryAddBindingModel", categoryAddBindingModel);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.categoryAddBindingModel",bindingResult);
 
-            return super.redirect("redirect:add");
+            return super.redirect("/categories/add");
         }
 
         this.categoryService

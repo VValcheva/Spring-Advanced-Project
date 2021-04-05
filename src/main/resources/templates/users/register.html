@@ -14,10 +14,19 @@
         <div class="row">
             <div class="col-6">
                 <div class="contact-form">
-                    <form th:action="@{/users/register}" th:method="POST">
-                        <input type="text" name="username" placeholder="Username">
-                        <input type="email" name="email" placeholder="Email">
+                    <form th:object="${userRegisterBindingModel}" th:action="@{/users/register}" th:method="POST">
+
+                        <small th:each="e : ${#fields.errors('username')}" th:text="${e}" id="nameError" class="form-text bg-warning rounded"></small>
+                        <input th:field="*{username}" type="text" name="username" placeholder="Username">
+
+                        <small th:each="e : ${#fields.errors('email')}" th:text="${e}" id="nameError" class="form-text bg-warning rounded"></small>
+                        <input th:field="*{email}" type="email" name="email" placeholder="Email">
+
+                        <small th:each="e : ${#fields.errors('password')}" th:text="${e}" id="nameError" class="form-text bg-warning rounded"></small>
                         <input type="password" name="password" placeholder="Password">
+
+                        <small th:if="${passwordNotMatch}" id="nameError" class="form-text bg-warning rounded">Password did not match</small>
+                        <small th:each="e : ${#fields.errors('confirmPassword')}" th:text="${e}" id="nameError" class="form-text bg-warning rounded"></small>
                         <input type="password" name="confirmPassword" placeholder="Confirm password">
 
                         <input type="submit" value="submit">

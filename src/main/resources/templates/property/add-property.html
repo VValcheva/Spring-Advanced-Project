@@ -17,15 +17,19 @@
                 <div class="contact-form">
                     <form th:object="${propertyAddBindingModel}" th:action="@{/properties/add}" th:method="POST" enctype="multipart/form-data">
                         <small th:each="e : ${#fields.errors('name')}" th:text="${e}" id="nameError" class="form-text bg-warning rounded"></small>
-                        <input type="text" name="name" id="name" placeholder="Name">
+                        <input th:field="*{name}" type="text" name="name" id="name" placeholder="Name">
+
                         <small th:each="e : ${#fields.errors('description')}" th:text="${e}" id="nameError" class="form-text bg-warning rounded"></small>
-                        <textarea name="description" id="description" cols="41" rows="5" placeholder="Description"></textarea>
+                        <textarea th:field="*{description}" name="description" id="description" cols="41" rows="5" placeholder="Description"></textarea>
+
                         <small th:each="e : ${#fields.errors('pricePerMonth')}" th:text="${e}" id="nameError" class="form-text bg-warning rounded"></small>
-                        <input type="number" name="pricePerMonth" id="pricePerMonth" placeholder="Price per month">
+                        <input th:field="*{pricePerMonth}" type="number" name="pricePerMonth" id="pricePerMonth" placeholder="Price per month">
+
                         <small th:each="e : ${#fields.errors('imageUrl')}" th:text="${e}" id="nameError" class="form-text bg-warning rounded"></small>
                         <input type="file" class="form-control-file" id="imageUrl" name="imageUrl">
+
                         <small th:each="e : ${#fields.errors('category')}" th:text="${e}" id="nameError" class="form-text bg-warning rounded"></small>
-                        <select  style="margin-bottom: 20px;" class="form-control" id="" name="category">
+                        <select  th:value="*{category}" style="margin-bottom: 20px;" class="form-control" id="" name="category">
                             <option selected="" disabled="">Select Category</option>
                             <option th:each="c : ${categories}" th:value="${c}" th:text="${c}">First Artist</option>
                         </select>

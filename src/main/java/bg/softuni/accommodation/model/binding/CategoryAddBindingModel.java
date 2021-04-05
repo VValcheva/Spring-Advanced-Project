@@ -9,7 +9,7 @@ public class CategoryAddBindingModel {
     public CategoryAddBindingModel() {
     }
 
-    @NotBlank(message = "Category can not br empty!")
+    @NotBlank(message = "Category can not be empty!")
     @Size(min = 3, max = 20, message = "Category must be minimum 3 characters!")
     public String getName() {
         return name;
